@@ -1,0 +1,10 @@
+﻿@model LexiconMVCData.Models.Person
+
+<div class="row">
+    <div class="col-1"> @Html.DisplayFor(model => model.Id)</div>
+    <div class="col-3"> @Html.DisplayFor(model => model.Name)</div>
+    <div class="col-3">@Html.DisplayFor(model => model.PhoneNumber)</div>
+    <div class="col-3">@Html.DisplayFor(model => model.City.Name)</div>
+    
+</div>
+

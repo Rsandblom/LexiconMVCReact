@@ -1,0 +1,65 @@
+﻿@model LexiconMVCData.ViewModels.CountriesViewModel
+
+@{ ViewData["Title"] = "Index"; }
+
+<hr class="mt-5">
+
+<div class="m-3 w-25">
+    <h2>Create new Country</h2>
+    <form class="form" asp-action="Create" method="post">
+        <div class="form-group">
+            <label asp-for="Name"></label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name"></span>
+        </div>
+        <div>
+            <input type="submit" value="Add Country" class="btn btn-primary mb-2 mr-sm-2" />
+        </div>
+    </form>
+</div>
+
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th></th>
+            <th>
+                Cities
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.CountriesViewModelItemsList)
+        {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                <div class="row">
+                    <div class="mb-2 mr-sm-2">
+                        <form asp-action="Delete" method="post">
+                            <input type="hidden" asp-for="@item.Id" />
+                            <input class="btn btn-danger" type="submit" value="Delete" asp-controller="Countries" asp-action="Delete" asp-route-id="@item.Id" />
+                        </form>
+                    </div>
+                    <div>
+                        <form asp-action="Edit" method="get">
+                            <input type="hidden" asp-for="@item.Id" />
+                            <input class="btn btn-primary" type="submit" value="Edit" asp-controller="Countries" asp-action="Edit" asp-route-id="@item.Id" />
+                        </form>
+                    </div>
+                </div>
+
+            </td>
+            <td>
+                @foreach (var city in item.Cities)
+                {
+        <partial name="_CityPartial" for="@city" />}
+            </td>
+        </tr>}
+    </tbody>
+</table>

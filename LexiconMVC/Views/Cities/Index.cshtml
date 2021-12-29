@@ -1,0 +1,74 @@
+﻿@model LexiconMVCData.ViewModels.CitiesViewModel
+
+@{ ViewData["Title"] = "Index"; }
+
+<h1>Index</h1>
+
+
+<hr class="mt-5">
+
+<div class="m-3 w-25">
+    <h2>Create new City</h2>
+    <form class="form" asp-action="Create" method="post">
+        <div class="form-group">
+            <label asp-for="Name"></label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="CountryIdString" class="mb-2 mr-sm-2"></label>
+            <select asp-for="CountryIdString" asp-items="Model.Countries" class="btn btn-primary dropdown-toggle"></select>
+            <span asp-validation-for="CountryIdString"></span>
+        </div>
+        <div>
+            <input type="submit" value="Add City" class="btn btn-primary mb-2 mr-sm-2" />
+        </div>
+    </form>
+</div>
+
+<hr class="mt-5">
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th></th>
+            <th>
+                People
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.CitiesViewModelItemsList)
+        {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                <div class="row">
+                    <div class="mb-2 mr-sm-2">
+                        <form asp-action="Delete" method="post">
+                            <input type="hidden" asp-for="@item.Id" />
+                            <input class="btn btn-danger" type="submit" value="Delete" asp-controller="Cities" asp-action="Delete" asp-route-id="@item.Id" />
+                        </form>
+                    </div>
+                    <div>
+                        <form asp-action="Edit" method="get">
+                            <input type="hidden" asp-for="@item.Id" />
+                            <input class="btn btn-primary" type="submit" value="Edit" asp-controller="Cities" asp-action="Edit" asp-route-id="@item.Id" />
+                        </form>
+                    </div>
+                </div>
+                       
+            </td>
+            <td>
+                @foreach (var person in item.People)
+                {
+        <partial name="_PersonPartial" for="@person" />}
+            </td>
+        </tr>
+         }
+    </tbody>
+</table>

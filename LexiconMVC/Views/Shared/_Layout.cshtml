@@ -1,0 +1,37 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <title>@ViewBag.Title</title>
+</head>
+<body>
+    <header>
+        <img src="/images/pagelogo.png" alt="page logo" width="200" height="100" asp-append-version="true">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <ul class="navbar-nav mr-auto">
+                <li><a class="nav-link" asp-controller="Home" asp-action="Index">Index</a></li>
+                <li><a class="nav-link" asp-controller="Home" asp-action="About">About</a></li>
+                <li><a class="nav-link" asp-controller="Home" asp-action="Contact">Contact</a></li>
+                <li><a class="nav-link" asp-controller="Home" asp-action="Projects">Projects</a></li>
+                <li><a class="nav-link" asp-controller="Languages" asp-action="Index">Languages</a></li>
+                <li><a class="nav-link" asp-controller="Ajax" asp-action="Index">Ajax</a></li>
+                <li><a class="nav-link" asp-controller="People" asp-action="Index">People</a></li>
+                <li><a class="nav-link" asp-controller="Countries" asp-action="Index">Countries</a></li>
+                <li><a class="nav-link" asp-controller="Cities" asp-action="Index">Cities</a></li>
+                <li><a class="nav-link" asp-controller="IdentityManager" asp-action="Index">Identity Manager</a></li>
+            </ul>
+            <partial name="_LoginPartial"/>
+        </nav>
+    </header>
+    <div>
+        @RenderBody()
+    </div>
+    <footer>@DateTime.Now.ToShortDateString()</footer>
+    <script src="~/js/PersonScript.js"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>
