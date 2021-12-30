@@ -2,9 +2,10 @@
 
 const AddPersonForm = (props) => {
 
-    const initialFormState = { id: null, name: '', phoneNumber: '', cityName: ''};
+    const initialFormState = { id: null, name: '', phoneNumber: '', cityName: '1'};
     const [person, setPerson] = useState(initialFormState);
-    const [optionValue, setOptionValue] = useState("");
+    const [optionValue, setOptionValue] = useState(1);
+    const [errorMsg, setErrorMsg] = useState('');
 
     const handleSelect = (e) => {
         console.log(e.target.value);
@@ -16,20 +17,22 @@ const AddPersonForm = (props) => {
     const handleInputChange = (event) => {
         const { name, value } = event.target;
         setPerson({ ...person, [name]: value });
+        setErrorMsg('');
     }
 
     return (
-
-        
-
         <form onSubmit={event => {
             event.preventDefault()
-            if (!person.name) return
+            if (!person.name || !person.phoneNumber) {
+                setErrorMsg("Name and phone-number cannot be empty!!")
+                return;
+            }
 
             props.addPerson(person)
             setPerson(initialFormState)
-            setOptionValue(0);
+            setOptionValue(1);
         }}>
+            <span className="text-danger">{errorMsg}</span>
             <div className="form-group">
                 <label>Name</label>
                 <input type="text" name="name" value={person.name} onChange={handleInputChange} className="form-control"/>

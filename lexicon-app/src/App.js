@@ -11,32 +11,33 @@ function App() {
     const [isLoaded, setIsLoaded] = useState(false);
     const [items, setItems] = useState([]);
     const [cities, setCities] = useState([]);
-    const initialFormState = { id: null, name: '', phoneNumber: '', cityName: '' };
+    const initialFormState = { id: null, name: '', phoneNumber: '', cityName: '', languages: [] };
     const [currentPerson, setCurrentPerson] = useState(initialFormState);
+    const [reRender, setReRender] = useState(0);
+    const [sortOrder, setSortOrder] = useState("asc");
 
     const showDetails = (person) => {
-        setCurrentPerson({ id: person.id, name: person.name, phoneNumber: person.phoneNumber, cityName: person.cityName });
+        setCurrentPerson({ id: person.id, name: person.name, phoneNumber: person.phoneNumber, cityName: person.cityName, languages: person.languages});
     }
 
-    const addPerson = (person) => {
-        person.id = items.length + 1;
-        alert(person.cityName + " " + person.name);
-        setItems([...items, person]);
-
-
+    function SortPersonList() {
+        if (sortOrder === "asc") {
+            items.sort((first, second) => {
+                return first.name > second.name ? 1 : -1;
+            });
+            setSortOrder("dsc");
+        }
+        else {
+            items.sort((first, second) => {
+                return first.name > second.name ? -1 : 1;
+            });
+            setSortOrder("asc");
+        }
     }
 
-    const deletePerson = (personDelete) => {
-        setItems(items.filter((person) => person.id !== personDelete.id))
-        setCurrentPerson(initialFormState);
-    }
-
-    // Note: the empty deps array [] means
-    // this useEffect will run once
-    // similar to componentDidMount()
     useEffect(() => {
         GetPersons();
-    }, [])
+    }, [reRender])
 
     function GetPersons() {
         fetch("https://localhost:44389/react/getallpersons")
@@ -45,11 +46,9 @@ function App() {
                 (result) => {
                     setIsLoaded(true);
                     setItems(result.reactPersonVMList);
+                    console.log(items);
                     setCities(result.citiesList);
                 },
-                // Note: it's important to handle errors here
-                // instead of a catch() block so that we don't swallow
-                // exceptions from actual bugs in components.
                 (error) => {
                     setIsLoaded(true);
                     setError(error);
@@ -57,10 +56,50 @@ function App() {
             )
     }
 
+    const addPerson = (person) => {
+        PostPerson(person);
+        setReRender(reRender + 1);
+    }
+
+    function PostPerson(person) {
+        fetch("https://localhost:44389/react/create", {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: person.name, phoneNumber: person.phoneNumber, cityName: person.cityName })
+        })
+            .then(response => {
+                console.log('Response:', response);
+            })
+            .then(data => {
+                console.log('Success:', data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+
+    }
+
+    const deletePerson = (personDelete) => {
+        DeletePerson(personDelete.id);
+        setReRender(reRender + 1);
+        setCurrentPerson(initialFormState);
+    }
+
+    function DeletePerson(iddel) {
+        fetch("https://localhost:44389/react/delete",
+            {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: iddel })
+            })
+            .then(response => {
+                console.log('Response:', response);
+            });
+    }
+
 
     return (
         <div className="mt-3">
-            
             <div className="container-fluid">
                 <div className="row">
                     <div className="col-3">
@@ -77,12 +116,10 @@ function App() {
             <div className="mt-4">
                 <h2>Person list</h2>
                 <div>
-                    <PersonTable persons={items} showDetails={showDetails} />
+                    <PersonTable persons={items} showDetails={showDetails} sort={SortPersonList}/>
                 </div>
             </div>
-
         </div>
-
     )
 }
 

@@ -27,11 +27,18 @@ namespace LexiconMVCData.Controllers
         [HttpGet]
         public IActionResult GetAllPersons()
         {
-            var peopleList = _context.People.Include(p => p.City).ToList();
+            var peopleWithLangList = _context.People.Include(p => p.City).Include(pl => pl.PersonLanguages)
+                .ThenInclude(l => l.Language).ToList();
             var reactPersonVMList = new List<ReactPersonViewModel>();
-            foreach (var item in peopleList)
+            foreach (var item in peopleWithLangList)
             {
-                reactPersonVMList.Add(new ReactPersonViewModel(item.Id, item.Name, item.PhoneNumber, item.City.Name));
+                var personLanguages = item.PersonLanguages.Select(p => p.Language).ToList();
+                var reactLanguageVMList = new List<ReactLanguageViewModel>();
+                foreach (var lang in personLanguages)
+                {
+                    reactLanguageVMList.Add(new ReactLanguageViewModel(lang.Id, lang.Name));
+                }
+                reactPersonVMList.Add(new ReactPersonViewModel(item.Id, item.Name, item.PhoneNumber, item.City.Name, reactLanguageVMList));
             }
 
             var citiesList = _context.Cities.ToList();
@@ -49,20 +56,32 @@ namespace LexiconMVCData.Controllers
         }
 
         [HttpPost]
-        public ActionResult Create(ReactPersonViewModel reactPersonVM)
+        public ActionResult Create([FromBody] ReactPersonViewModel reactPersonVM)
         {
             if (ModelState.IsValid)
             {
+           
                 var city = _context.Cities.Where(c => c.Id == Int32.Parse(reactPersonVM.CityName)).FirstOrDefault();
                 Person person = new Person { Name = reactPersonVM.Name, PhoneNumber = reactPersonVM.PhoneNumber, CityId = city.Id };
                 _context.People.Add(person);
                 _context.SaveChanges();
                 city.People.Add(person);
                 _context.SaveChanges();
-
+            
+                return Ok();
             }
 
-            return RedirectToAction(nameof(Index));
+            return BadRequest();
+        }
+
+        [HttpPost]
+        public ActionResult Delete([FromBody] ReactPersonViewModel reactPersonVM)
+        {
+            var person = _context.People.Find(reactPersonVM.Id);
+            _context.Remove(person);
+            _context.SaveChanges();
+
+            return Ok();
         }
     }
 }

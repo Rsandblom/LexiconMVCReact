@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LexiconMVCData.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,6 +13,8 @@ namespace LexiconMVCData.ViewModels
         public string PhoneNumber { get; set; }
 
         public string CityName { get; set; }
+
+        public List<ReactLanguageViewModel> Languages { get; set; }
         /*
         public City City { get; set; }
         public int CityId { get; set; }
@@ -22,12 +25,13 @@ namespace LexiconMVCData.ViewModels
 
         }
 
-        public ReactPersonViewModel(int id, string name, string phoneNumber, string cityName)
+        public ReactPersonViewModel(int id, string name, string phoneNumber, string cityName, List<ReactLanguageViewModel> languages)
         {
             Id = id;
             Name = name;
             PhoneNumber = phoneNumber;
             CityName = cityName;
+            Languages = languages;
         }
     }
 }
